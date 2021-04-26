@@ -116,7 +116,7 @@ function PowerEnd () {
 sprites.onOverlap(SpriteKind.BossShot, SpriteKind.Player, function (sprite, otherSprite) {
     sprite.destroy(effects.disintegrate, 100)
     if (PowerUp != 1) {
-        info.changeLifeBy(-2)
+        info.changeLifeBy(BossDMG)
         music.knock.play()
         scene.cameraShake(4, 500)
         HitsTaken += 1
@@ -237,40 +237,25 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
 })
 function Boss_Fight () {
     if (BossFight == 1) {
-        pause(1000)
         projectile2 = sprites.createProjectileFromSprite(assets.image`galgaDart0`, Bossy, -150, 0)
         projectile2.setKind(SpriteKind.BossShot)
         music.pewPew.play()
-        pause(1000)
+        pause(BossBreak)
         projectile2 = sprites.createProjectileFromSprite(assets.image`galgaDart0`, Bossy, -150, 0)
         projectile2.setKind(SpriteKind.BossShot)
         music.pewPew.play()
-        pause(1000)
+        pause(BossBreak)
         projectile2 = sprites.createProjectileFromSprite(assets.image`galgaDart0`, Bossy, -150, 0)
         projectile2.setKind(SpriteKind.BossShot)
         music.pewPew.play()
-        pause(1000)
+        pause(BossBreak + 500)
         Bossy.setPosition(125, spacePlane.y)
-        pause(1000)
-        projectile2 = sprites.createProjectileFromSprite(assets.image`galgaDart0`, Bossy, -150, 0)
-        projectile2.setKind(SpriteKind.BossShot)
-        music.pewPew.play()
-        pause(1000)
-        projectile2 = sprites.createProjectileFromSprite(assets.image`galgaDart0`, Bossy, -150, 0)
-        projectile2.setKind(SpriteKind.BossShot)
-        music.pewPew.play()
-        pause(1000)
-        projectile2 = sprites.createProjectileFromSprite(assets.image`galgaDart0`, Bossy, -150, 0)
-        projectile2.setKind(SpriteKind.BossShot)
-        music.pewPew.play()
-        pause(1000)
-        Bossy.setPosition(133, spacePlane.y)
     }
 }
 sprites.onOverlap(SpriteKind.Food, SpriteKind.Player, function (sprite, otherSprite) {
     music.jumpUp.play()
     sprite.destroy()
-    Fuel.value += randint(30, 70)
+    Fuel.value += randint(40, 70)
     ConsumablesCollected += 1
 })
 statusbars.onZero(StatusBarKind.EnemyHealth, function (status) {
@@ -290,7 +275,7 @@ statusbars.onZero(StatusBarKind.EnemyHealth, function (status) {
 sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Player, function (sprite, otherSprite) {
     sprite.destroy(effects.disintegrate, 100)
     if (PowerUp != 1) {
-        info.changeLifeBy(-1)
+        info.changeLifeBy(BogeyDMG)
         music.knock.play()
         scene.cameraShake(4, 500)
         HitsTaken += 1
@@ -306,9 +291,9 @@ sprites.onOverlap(SpriteKind.jUnK, SpriteKind.Player, function (sprite, otherSpr
     sprite.destroy(effects.disintegrate, 500)
     if (PowerUp != 1) {
         music.knock.play()
-        info.changeLifeBy(-1)
+        info.changeLifeBy(AsteroidDMG)
         HitsTaken += 1
-        Speed = 50
+        Speed = Stun
         pause(2000)
         Speed = 100
     }
@@ -342,6 +327,14 @@ let BossHealth: StatusBarSprite = null
 let Bossy: Sprite = null
 let projectile2: Sprite = null
 let projectile: Sprite = null
+let BossBreak = 0
+let BogeyDMG = 0
+let AsteroidDMG = 0
+let BossDMG = 0
+let Stun = 0
+let FuelUsage = 0
+let BogeySpawnRate = 0
+let BogeySpeed = 0
 let BossFight = 0
 let AttackSpeed = 0
 let PowerUp = 0
@@ -355,7 +348,6 @@ let spacePlane: Sprite = null
 spacePlane = sprites.create(assets.image`Spider0`, SpriteKind.Player)
 Speed = 100
 spacePlane.setStayInScreen(true)
-info.setLife(3)
 Fuel = statusbars.create(20, 5, StatusBarKind.Energy)
 Fuel.attachToSprite(spacePlane)
 Fuel.setColor(4, 2, 3)
@@ -363,6 +355,7 @@ Fuel.setBarBorder(1, 8)
 Fuel.setStatusBarFlag(StatusBarFlag.SmoothTransition, true)
 Fuel.setOffsetPadding(0, -7)
 Fuel.setLabel("ENG")
+info.setLife(3)
 effects.starField.startScreenEffect()
 let asteroidCostumes = [
 sprites.space.spaceSmallAsteroid0,
@@ -378,6 +371,8 @@ sprites.space.spaceAsteroid3,
 sprites.space.spaceAsteroid4
 ]
 game.showLongText("Welcome to Space Raider! Use the buttons to move, and A to attack. Collect apples to replenish Energy, pizza to increase your hearts, and crystals to gain a Power-Up! Press B to see your performance. Enjoy!!! ", DialogLayout.Bottom)
+game.showLongText("Choose Difficulty!", DialogLayout.Bottom)
+story.showPlayerChoices("Easy", "Normal", "Hard", "Insane")
 TimeFlown = 0
 KillCount = 0
 ConsumablesCollected = 0
@@ -387,6 +382,46 @@ AttackSpeed = 500
 let BossCount = 0
 let BossKillC = 0
 BossFight = 0
+if (story.checkLastAnswer("Easy")) {
+    BogeySpeed = -60
+    BogeySpawnRate = 1750
+    FuelUsage = -1
+    Stun = 70
+    BossDMG = -1
+    AsteroidDMG = -1
+    BogeyDMG = -1
+    BossBreak = 1000
+}
+if (story.checkLastAnswer("Normal")) {
+    BogeySpeed = -100
+    BogeySpawnRate = 1000
+    FuelUsage = -2
+    Stun = 50
+    BossDMG = -2
+    AsteroidDMG = -1
+    BogeyDMG = -1
+    BossBreak = 750
+}
+if (story.checkLastAnswer("Hard")) {
+    BogeySpeed = -125
+    BogeySpawnRate = 750
+    FuelUsage = -2.5
+    Stun = 40
+    BossDMG = -2
+    AsteroidDMG = -2
+    BogeyDMG = -1
+    BossBreak = 500
+}
+if (story.checkLastAnswer("Insane")) {
+    BogeySpeed = -150
+    BogeySpawnRate = 500
+    FuelUsage = -3
+    Stun = 30
+    BossDMG = -3
+    AsteroidDMG = -2
+    BogeyDMG = -2
+    BossBreak = 200
+}
 game.onUpdate(function () {
     controller.moveSprite(spacePlane, Speed, Speed)
     if (PowerUp == 3) {
@@ -394,7 +429,7 @@ game.onUpdate(function () {
     } else {
         AttackSpeed = 500
     }
-    if (BossCount == 20) {
+    if (BossCount == 15) {
         BossCount = 0
         Bossy = sprites.create(assets.image`MSS Centerprise0`, SpriteKind.Boss)
         Bossy.setPosition(130, 50)
@@ -458,9 +493,9 @@ game.onUpdateInterval(2500, function () {
     Asteroid.setPosition(160, randint(5, 115))
     Asteroid.setFlag(SpriteFlag.AutoDestroy, true)
 })
-game.onUpdateInterval(1000, function () {
+game.onUpdateInterval(BogeySpawnRate, function () {
     Bogey = sprites.create(assets.image`UFO`, SpriteKind.Enemy)
-    Bogey.setVelocity(-100, 0)
+    Bogey.setVelocity(BogeySpeed, 0)
     Bogey.setPosition(160, randint(5, 115))
     Bogey.setFlag(SpriteFlag.AutoDestroy, true)
 })
@@ -473,8 +508,8 @@ forever(function () {
     }
     Boss_Fight()
 })
-game.onUpdateInterval(200, function () {
-    Fuel.value += -1
+game.onUpdateInterval(300, function () {
+    Fuel.value += FuelUsage
 })
 game.onUpdateInterval(randint(14000, 16000), function () {
     Pizza = sprites.create(img`
