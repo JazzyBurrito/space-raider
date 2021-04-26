@@ -127,7 +127,7 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     game.showLongText("Bogeys Destroyed: " + convertToText(KillCount) + " Consumables Collected: " + convertToText(ConsumablesCollected) + (" Time Flown: " + convertToText(TimeFlown) + " Hits Taken: " + convertToText(HitsTaken)), DialogLayout.Full)
 })
 sprites.onOverlap(SpriteKind.Power, SpriteKind.Player, function (sprite, otherSprite) {
-    PowerUp = randint(1, 5)
+    PowerUp = randint(1, 6)
     music.magicWand.play()
     ConsumablesCollected += 1
     if (PowerUp == 1) {
@@ -285,6 +285,7 @@ statusbars.onZero(StatusBarKind.EnemyHealth, function (status) {
         info.changeScoreBy(20)
     }
     info.changeLifeBy(2)
+    music.magicWand.play()
 })
 sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Player, function (sprite, otherSprite) {
     sprite.destroy(effects.disintegrate, 100)
@@ -464,6 +465,12 @@ game.onUpdateInterval(1000, function () {
     Bogey.setFlag(SpriteFlag.AutoDestroy, true)
 })
 forever(function () {
+    if (Fuel.value < 30) {
+        music.playMelody("- - - - C5 - - - ", 1200)
+    }
+    if (info.life() < 2) {
+        music.playMelody("- - - - C - - - ", 1200)
+    }
     Boss_Fight()
 })
 game.onUpdateInterval(200, function () {
