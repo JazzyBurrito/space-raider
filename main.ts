@@ -385,7 +385,7 @@ sprites.space.spaceAsteroid2,
 sprites.space.spaceAsteroid3,
 sprites.space.spaceAsteroid4
 ]
-game.showLongText("Welcome to Space Raider! Use the buttons to move, and A to attack. Collect apples to replenish Energy, pizza to increase your hearts, and crystals to gain a Power-Up! Press B to see your performance. Enjoy!!! ", DialogLayout.Bottom)
+game.showLongText("Welcome to Space Raider! Use the buttons to move, and A to attack. Collect apples to replenish Energy, pizza to increase your hearts, and crystals to gain a Power-Up! Press B to see your performance. Are you ready to take on space!? ", DialogLayout.Bottom)
 game.showLongText("Choose Difficulty!", DialogLayout.Bottom)
 story.showPlayerChoices("Easy", "Normal", "Hard", "Insane")
 TimeFlown = 0
