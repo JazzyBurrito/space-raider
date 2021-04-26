@@ -298,6 +298,21 @@ sprites.onOverlap(SpriteKind.jUnK, SpriteKind.Player, function (sprite, otherSpr
         Speed = 100
     }
 })
+info.onLifeZero(function () {
+    if (story.checkLastAnswer("Easy")) {
+        info.setScore(info.score() * 1)
+    }
+    if (story.checkLastAnswer("Normal")) {
+        info.setScore(info.score() * 2)
+    }
+    if (story.checkLastAnswer("Hard")) {
+        info.setScore(info.score() * 3)
+    }
+    if (story.checkLastAnswer("Insane")) {
+        info.setScore(info.score() * 4)
+    }
+    game.over(false)
+})
 statusbars.onZero(StatusBarKind.Energy, function (status) {
     game.over(false)
 })
